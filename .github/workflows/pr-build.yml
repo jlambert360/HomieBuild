@@ -41,23 +41,10 @@ jobs:
       - name: "Setup MSBuild"
         uses: microsoft/setup-msbuild@v1
 
-      - name: "Cache DXSDK_Jun10.exe"
-        uses: actions/cache@v2
-        with:
-          path: ./Tools/DX/
-          key: ${{ runner.os }}
-
-      - name: "Download DirectX SDK"
-        working-directory: ${{ github.workspace }}
+      - name: "Install DirectX SDK"
         shell: powershell
         run: |
-          if (!(Test-Path ".\Tools\DX\DXSDK_Jun10.exe" -PathType Leaf)) { Invoke-WebRequest -Uri https://github.com/project-slippi/Ishiiruka/releases/download/v2.2.5/DXSDK_Jun10.exe -UseBasicParsing -OutFile ".\Tools\DX\DXSDK_Jun10.exe" }
-
-      - name: "Install DirectX SDK"
-        working-directory: ${{ github.workspace }}
-        shell: cmd
-        run: |
-          .\Tools\DX\DXSDK_Jun10.exe /U /F
+          choco install directx-sdk
 
       - name: "Clone Dolphin"
         shell: cmd
@@ -213,19 +200,33 @@ jobs:
           libxxf86vm-dev \
           x11proto-xinerama-dev
 
+      - name: "Clone Dolphin"
+        shell: bash
+        run: |
+          git clone https://github.com/jlambert360/Ishiiruka
+
+      - name: "Replace Files"
+        if: success()
+        working-directory: ${{ github.workspace }}
+        run: |
+          rm ${{ github.workspace }}/Ishiiruka/build-linux.sh
+          rm ${{ github.workspace }}/Ishiiruka/build-appimage.sh
+          cp -v ${{ github.workspace }}/Resources/build-linux.sh ${{ github.workspace }}/Ishiiruka
+          cp -v ${{ github.workspace }}/Resources/build-appimage.sh ${{ github.workspace }}/Ishiiruka
+
       - name: "Build Dolphin"
         if: success()
         working-directory: ${{ github.workspace }}
         run: |
-          chmod +x ./Resources/build-linux.sh
-          ./Resources/build-linux.sh
+          chmod +x ./Ishiiruka/build-linux.sh
+          ./Ishiiruka/build-linux.sh
 
       - name: "Build AppImage"
         if: success()
         working-directory: ${{ github.workspace }}
         run: |
-          chmod +x ./Resources/build-appimage.sh
-          ./Resources/build-appimage.sh
+          chmod +x ./build-appimage.sh
+          ./build-appimage.sh
 
       - name: "Package"
         if: success()
