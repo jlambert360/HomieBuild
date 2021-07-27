@@ -112,7 +112,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v2-preview
         with:
-          name: "HomieBuild"
+          name: "HomieBuild-Windows"
           path: "./artifact/"
 
       - name: "Create Release"
@@ -233,7 +233,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           mkdir artifact
-          FILE_NAME=${{ env.CURR_DATE }}-${{ env.GIT_HASH }}-${{ env.GIT_TAG }}-linux.zip
+          FILE_NAME=HomieBuild.zip
           chmod +x ./*.AppImage
           zip -r "${FILE_NAME}" ./*.AppImage*
           mv "${FILE_NAME}" ./artifact/
@@ -242,7 +242,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v2-preview
         with:
-          name: linux
+          name: HomieBuild-linux
           path: "./artifact/"
           
       - name: "Create Release"
