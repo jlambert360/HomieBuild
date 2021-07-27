@@ -7,7 +7,7 @@ DATA_SYS_PATH="./Data/Sys/"
 BINARY_PATH="./build/Binaries/"
 
 # Move into the build directory, run CMake, and compile the project
-mv -i /home/runner/work/homiebuild/homiebuild/Ishiiruka/* /home/runner/work/homiebuild/homiebuild/
+mv -i /home/runner/work/HomieBuild/HomieBuild/Ishiiruka/* /home/runner/work/HomieBuild/HomieBuild/
 
 COMMITHASH="75123e34eac5b0f3204f32a116c389f95da0766a"
 FPPVERSION="2.28"
