@@ -10,14 +10,17 @@ cd /d %~dp0
 
 call settings.bat
 
-IF EXIST %SD_CARD_PATH% DEL %SD_CARD_PATH% /s
+IF EXIST "%SD_CARD_PATH%" goto :Continue
+IF NOT EXIST "%SD_CARD_PATH%" goto :MakeSD
 
+:MakeSD
 echo  Creating a virtual SD card. . .
 "mksdcard.exe" %SD_CARD_SIZE% "sd.raw"
-move "sd.raw" %SD_CARD_PATH%
+move "sd.raw" "%SD_CARD_PATH%"
 echo.
 echo  Created.
 
+:Continue
 set PURGE_COMMAND=
 if %PURGE%==1 (
     set PURGE_COMMAND=/PURGE
