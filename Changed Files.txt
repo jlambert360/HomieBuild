@@ -1,0 +1,61 @@
+Music:
+	Tracklist:
+		pf/sound/tracklist/Green_Hill_Zone.tlst
+	BRSTMs:
+		pf/sound/strm/Green Hill Zone:
+			Egg Emperor - Sonic Generations 3DS.brstm
+			Tropical Resort (Act 2) - Sonic Generations 3DS.brstm
+			Special Stage Emerald Challenge - Sonic Heroes.brstm
+			Speed Highway Classic - Sonic Generations.brstm
+			Hydrocity Zone Act 2 - GaMetal.brstm
+			Metallic Madness Zone Act 1 - Sonic Mania.brstm
+			Metallic Madness Zone Act 2 - Sonic Mania.brstm
+			Hi-Spec Robo Go! - Sonic Mania.brstm
+			Metal Scratchin - Sonic Rush.brstm
+			Stardust Speedway Zone Act 2 - Sonic Mania.brstm
+			Get Edgy - Sonic Rush.brstm
+			Bomber Barbara - Sonic Rush.brstm
+			Enemy Territory - Sonic Forces.brstm
+			Crazy Robo - Sonic Adventure.brstm
+			Roulette Road - Team Sonic Racing.brstm
+			Mr. Unsmiley (Sky Rail) - Sonic Adventure 2.brstm
+			Monkey Dogfight - Super Monkey Ball 2.brstm
+			Tricky Sister Girl - Air Gear.brstm
+			Mad Babies - Air Gear.brstm
+			Put 2 Much - Air Gear.brstm
+	Tracklist:
+		pf/sound/tracklist/Smashville.tlst
+	BRSTMs:
+		pf/sound/strm/Smashville:
+			Ain't Nothin Like A Funky Beat - Lethal League Blaze.brstm
+			Sneakman - Jet Set Radio.brstm
+			Jazzy NYC - SFIII.brstm
+			Twilight - SFIII.brstm
+			This is true Love Makin - Capcom vs. SNK 2.brstm
+			Nebuta (Aomori Stage) - Capcom vs. SNK 2.brstm
+			Strong And Strike - Naruto.brstm
+			Fake - Naruto.brstm
+			Konoha Gate - Naruto Gekito Ninja Taisen! 4.brstm
+			Hokage's Monument - Naruto Gekito Ninja Taisen! 4.brstm
+			Seeker Of Truth - BlazBlue Cross Tag Battle.brstm
+			Atelier Sophie Battle Theme - The Alchemist of the Mysterious.brstm
+			Moonlit Melee - Skullgirls.brstm
+			Clock Tower - Marvel Vs Capcom 2.brstm
+			Crazy Noisy Bizarre Town - JoJos Bizarre Adventure.brstm
+			Black Knights - Code Geass.brstm [BRSTM FILE MISSING]
+	Tracklist:
+		pf/sound/tracklist/Smashville_Concert.tlst
+	BRSTMs:
+		pf/sound/strm/Smashville Concert:
+			Luigi's Theme - Mario Strikers Charged.brstm
+			Swamp - Marvel Vs Capcom 2.brstm
+			Factory Stage - Marvel Vs Capcom 2.brstm
+			Don't Sweat The Technique - Eric B and Rakim.brstm
+		
+Costumes:
+	pf/info/costumeslots:
+		03.masq
+		20.masq
+		25.masq
+		38.masq
+		39.masq
