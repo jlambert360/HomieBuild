@@ -67,6 +67,9 @@ HOOK @ $8002D3A0
 }
 op b 0x10 @ $80078E14
 
+[Project+] Skip strap screen [PyotrLuzhin]
+* 046CADE8 48000298
+
 #############################################################################
 Reset multipac stage lock status between Classic & All-Star matches [wiiztec]
 #############################################################################
