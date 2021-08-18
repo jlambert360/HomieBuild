@@ -1184,72 +1184,80 @@ Disable Vertical Boost on Tumble KB [Dantarion, Magus]
 * 0486DBDC C05E8D40
 
 ###############################################################################################
-Reset Variables on Action Changes & RCO Lag Fix v1.1c [standardtoaster, ds22, Magus, DukeItOut]
+Reset Variables on Action Changes & RCO Lag Fix v2 [standardtoaster, ds22, Magus, DukeItOut, Eon]
 ###############################################################################################
+.alias action = 28
+.alias situation = 29
 HOOK @ $8077F780
 {
-  lwz r10, 0x70(r31)	# \
-  lwz r10, 0x20(r10)	# |
-  lwz r10, 0x0C(r10)	# | Access character ID
-  lwz r10, 0x2D0(r10)	# |
-  lis r7, 0x8000	#\|
-  cmplw r10, r7		#||
-  blt+ loc_0xA4		#||
-  lis r7, 0x81B0	#||Verify that this is a character
-  cmplw r10, r7		#||
-  bge+ loc_0xA4		#/|
-  lwz r10, 0x08(r10)	# |
-  lis r7, 0x8100	#\|
-  cmplw r10, r7		#|| Don't let SSE enemies trigger this!
-  blt loc_0xA4		#||
-  lis r7, 0x8140	#||
-  cmplw r10, r7		#||
-  bge loc_0xA4		#/|
-  lwz r10, 0x110(r10)	# / 
-  cmpwi r10, 0x37	
-  bge- loc_0xA4		
-  lwz r10, 0x1C(r31)	
-  lwz r10, 0x28(r10)	
-  lis r7, 0x8180	
-  cmpw r10, r7
-  bge- loc_0xA4		# Some tether entities are treated as separate???
-  lwz r10, 0x10(r10)
-  lbz r7,  0x08(r10)
-  lwz r10, 0x70(r31)
-  lwz r10, 0x20(r10)
-  lwz r9,  0x0C(r10)
-  lwz r8,  0x14(r10)
-  li r6, 0x0
-  cmpwi r28, 0x19;  beq- loc_0x78
-  cmpwi r28, 0xE;  blt- loc_0x6C
-  cmpwi r28, 0x10;  ble- loc_0x78
-  cmpwi r28, 0x112;  blt+ loc_0x6C
-  cmpwi r28, 0x115;  ble- loc_0x74
+  #isFighter()
+  lwz r3, 0x8(r31)
+  lwz r12, 0x3C(r3)
+  lwz r12, 0xA4(r12)
+  mtctr r12 
+  bctrl 
+  cmpwi r3, 0
+  bne end #not 0 = not a fighter 
+checkOne:
 
-loc_0x6C:
-  cmpwi r7, 0x1
-  bne- loc_0x78
+  #getSituationKind = getGrounded state, 0 = grounded, 1 = air
+  lwz r3, 0xD8(r31)
+  lwz r3, 0x14(r3)
+  lwz r12, 0x0(r3)
+  lwz r12, 0x14(r12)
+  mtctr r12 
+  bctrl 
+  mr situation, r3
+  cmpwi action, 0x19; beq checkTwo 
+  cmpwi action, 0xE; blt checkGrounded 
+  cmpwi action, 0x10; ble checkTwo
+  cmpwi action, 0x112; blt checkGrounded
+  cmpwi action, 0x115; ble saveOne
+checkGrounded:
+  cmpwi situation, 0; bne checkTwo #if not grounded 
+saveOne:
+  lwz r3, 0xD8(r31)
+  lwz r3, 0x64(r3)
+  lis r4, 0x1100
+  fsubs f1, f1, f1
+  lwz r12, 0x0(r3)
+  lwz r12, 0x3C(r12)
+  mtctr r12 
+  bctrl #set LA-Float[0] = 0.0 #landing lag count
 
-loc_0x74:
-  stw r6, 0(r8)
+checkTwo: 
+  cmpwi situation, 0x0;  beq setLedgeGrab #if grounded 
+  cmpwi action, 0xBD;  bne notDead #if not in death animation
+death:
+  lwz r3, 0xD8(r31)
+  lwz r3, 0x64(r3)
+  li r4, 0
+  lis r5, 0x1000
+  addi r5, r5, 81
+  lwz r12, 0x0(r3)
+  lwz r12, 0x1C(r12)
+  mtctr r12 
+  bctrl #set LA-Basic[81] = 0 #agt count
+  b setLedgeGrab
 
-loc_0x78:
-  cmpwi r7, 0x1;  beq+ loc_0xA0
-  cmpwi r28, 0xBD;  bne+ loc_0x90
-  stw r6, 324(r9)
-  b loc_0xA0
+notDead:
+  cmpwi action, 0x44;  bne end #if not GroundedHitstun end 
 
-loc_0x90:
-  cmpwi r28, 0x43;  blt+ loc_0xA4
-  cmpwi r28, 0x45;  bgt+ loc_0xA4
-
-loc_0xA0:
-  stw r6, 316(r9)
-
-loc_0xA4:
-  stw r28, 56(r30)
+setLedgeGrab:  
+  lwz r3, 0xD8(r31)
+  lwz r3, 0x64(r3)
+  li r4, 0
+  lis r5, 0x1000
+  addi r5, r5, 79
+  lwz r12, 0x0(r3)
+  lwz r12, 0x1C(r12)
+  mtctr r12 
+  bctrl #set LA-Basic[79] = 0, ledgegrab count
+end:
+  stw r28, 0x38(r30)
+  li r29, 1
+  lwz r3, 0x44(r30)
 }
-# -Ledgegrab Count (LABa[79]), AGT Count (LABa[81]), Landing Lag Mod (LAFl[0])
 
 ##################################################################
 Tether Limit is 1 for Zair and 2 for others V1.2 [standardtoaster]
@@ -1789,7 +1797,7 @@ HOOK @ $8089156c
   lis r12, 0x80B8
   ori r12, r12, 0x84A8
   lfs f2, 0(r12)
-} 
+}
 
 ###################################################################
 [Project+] Grabbed Opponents face opposite way from grabber [Eon]
@@ -1977,7 +1985,12 @@ HOOK @ $80724224
     ble %end% #if new speed <= 0, don't pass it
     #set as passed frame speed 
     fmr f30, f1
-}
+} 
+
+##################################################
+adjustCeil uses correct offset calculation [Eon]
+##################################################
+op lfs f0, 0x18(r1) @ $8089E6E4 #previously used bottom of ecb in calculation, now uses y position from getPosition
 
 .include Source/ProjectM/Damage.asm
 .include Source/ProjectM/DirectionalInfluence.asm
@@ -3150,18 +3163,6 @@ loc_0x7C:
 loc_0x12C:
   mr r3, r20
 }
-
-########################################
-[Project+] Olimar vaguefix bandaid [Eon]
-########################################
-HOOK @ $80746110
-{
-  lwz r12, 0(r3)
-  cmpwi r12, 0
-  beq %end%
-  lwz r12, 0xC(r12)
-}
-op beq 0xC @ $80746114
 
 ##############################################################################
 [Project+] All ground types but HRC act as basic for Pikmin pull chances [Eon]
