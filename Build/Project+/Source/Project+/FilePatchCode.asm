@@ -262,8 +262,31 @@ notMusic:
 pfmenu2 fixes (sc_title, mu_menumain & if_adv_mngr) [Dantarion]
 ###############################################################
 string "/menu2/sc_title.pac"     @ $806FF9A0
-string "/menu2/mu_menumain.pac"  @ $806FB248
 string "/menu2/if_adv_mngr.pac"  @ $80B2C7F8
+
+###############################################################
+Set menus based on Code Menu Stagelist setting [Bird]
+###############################################################
+* 26523400 00000002 # If 80523400 is less than 2
+string "/menu2/mu_menumain.pac"         @ $806FB248
+string "mu_menumain_en.pac"             @ $817F62BC
+string "/menu2/sc_selcharacter2.pac"    @ $806FF308
+string "sc_selcharacter2_en.pac"        @ $817F634D
+string "/menu2/sc_selmap.pac"           @ $806FF3F0
+string "sc_selmap_en.pac"               @ $817F637C
+string "stageslot/"                     @ $80550C98 # This address might change and crash
+string "stageinfo/"                     @ $80550CA8 # This address might change and crash
+* E0000000 80008000
+* 24523400 00000001 # If 80523400 is greater than 1
+string "/menu2/db_menumain.pac"         @ $806FB248
+string "db_menumain_en.pac"             @ $817F62BC
+string "/menu2/db_selcharacter2.pac"    @ $806FF308
+string "db_selcharacter2_en.pac"        @ $817F634D
+string "/menu2/db_selmap.pac"           @ $806FF3F0
+string "db_selmap_en.pac"               @ $817F637C
+string "stageslotdubs/"                 @ $80550C98 # This address might change and crash
+string "stageinfodubs/"                 @ $80550CA8 # This address might change and crash
+* E0000000 80008000
 
 ##############################################################################################################################
 [Project+] RSBE v1.30 (/Project+/pf/sfx, can load soundbank clones for stages) (requires CSSLE) [InternetExplorer, DukeItOut]

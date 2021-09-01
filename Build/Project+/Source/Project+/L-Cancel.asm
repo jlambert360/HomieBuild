@@ -155,6 +155,11 @@ end:
 
 L-Cancel Landing Lag and Success Rate and Score Display is Auto L-Cancel Option + White L-cancel Flash v3.0 [Magus, Standardtoaster, wiiztec, Eon]
 #check frame = 6 and disable flash
+# Code Menu mod made by Desi, based on Per Player versions by Wiiztech
+
+.alias CodeMenuStart = 0x804E
+.alias CodeMenuHeader = 0x02B0       #Offset of word containing location of the player 1 toggle. Source is compiled with headers for this.
+
 HOOK @ $80874850 
 {
 	cmpwi r3, 0x5
@@ -189,54 +194,64 @@ loc_0x0:
   cmpwi r3, 0
   ble checkForAutoLcancel
 trueLcancel:
-  #start flash effect
-  lwz r3, 0xD8(r31)
-  lwz r3, 0xAC(r3)
-
-  #initial colour
+  #Set R0 to White, branch to Apply Flash
   lis r0, 0xFFFF
   ori r0, r0, 0xFFDC
-  addi r4, r1, 0x18
-  stw r0, 0(r4)
-
-  li r5, 1
-  lwz r12, 0(r3)
-  lwz r12, 0x24(r12)
-  mtctr r12
-  bctrl
-
-  lwz r3, 0xD8(r31)
-  lwz r3, 0xAC(r3)
-  #time to transition
-  lis r0, 0x40C0
-  stw r0, 0x18(r1)
-  lfs f1, 0x18(r1)
-  #target colour of transition
-  lis r0, 0xFFFF
-  ori r0, r0, 0xFF00
-  addi r4, r1, 0x18
-  stw r0, 0(r4)
-  #true
-  li r5, 1
-
-  lwz r12, 0x0(r3)
-  lwz r12, 0x28(r12)
-  mtctr r12
-  bctrl
+  bl 0x4  #set LR
+  mflr r11 #Store Link Register in R11
+  addi r11, r11, 0xC
+  bl applyFlash
   li r6, 1
   b applyLcancel
-checkForAutoLcancel:  
-  li r6, 0
-  lis r11, 0x9017
-  ori r11, r11, 0xF36B
+
+checkForAutoLcancel: 
+  lwz r11, 28(r31)          #\Obtain Player ID 
+  lwz r11, 40(r11)          #|
+  lwz r11, 16(r11)          #|
+  lbz r11, 85(r11)          #/
+  mulli r11, r11, 0x4       #Determine which player offset to load
+  lis r6, CodeMenuStart
+  ori r6, r6, CodeMenuHeader    #Load Code Menu Header
+  lwzx r6, r6, r11
+  lbz r11, 0xB(r6)     #Load Option Selection
+  cmpwi r11, 0x1       #If (CodeMenuVar == 1), apply red flash on miss
+  beq applyLCancelRedFlash
+  lis r11, 0x9017           #\ Check if universal ALC toggle is on,
+  ori r11, r11, 0xF36B      #/ and skip red flash check if so
   lbz r11, 0(r11)
-  cmpwi r11, 0x1
-  bne calcStat
+  cmpwi r11, 0x1       #If (CodeMenuVar == 1), apply ALC
+  beq applyLcancel  #Skip applying fail flash if universal option is on
+  lhz r11, 0 (r6)
+  add r6, r11, r6   #Load up next toggle (Red Flash on L Cancel)
+  lbz r11, 0xB(r6)     #Load Option Selection
+  cmpwi r11, 0x1       #If (CodeMenuVar == 1), apply red flash on miss
+  beq applyRedFlashNoCancel
+  b calcStat
+
+applyRedFlashNoCancel:
+  lis r0, 0xFF00      #Red Flash
+  ori r0, r0, 0x0080
+  bl 0x4  #set LR
+  mflr r11 #Store Link Register in R11
+  addi r11, r11, 0xC
+  bl applyFlash
+  li r6, 0
+  b calcStat
+
+applyLCancelRedFlash:
+  lis r0, 0xFF00    RedFlash
+  ori r0, r0, 0x0080
+  bl 0x4  #set LR
+  mflr r11 #Store Link Register in R11
+  addi r11, r11, 0x0C
+  bl applyFlash
+  li r6, 0
+
 applyLcancel:  
 #load 0.5
-
   lfs f0, -23448(r2)
   fmuls f30, f30, f0
+  b calcStat
 
 #everything past this point is for the stat
 calcStat:
@@ -301,8 +316,45 @@ loc_0x98:
   fsub f30, f30, f0
   fadds f31, f31, f1
   fdivs f31, f31, f30
+  b %end%
 
 
+applyFlash:
+  #Set r0 to color. First 6 digits are color, last 2 digits are opacity.
+    #start flash effect
+  lwz r3, 0xD8(r31)
+  lwz r3, 0xAC(r3)
+
+  #initial colour
+  addi r4, r1, 0x18
+  stw r0, 0(r4)
+
+  li r5, 1
+  lwz r12, 0(r3)
+  lwz r12, 0x24(r12)
+  mtctr r12
+  bctrl
+
+  lwz r3, 0xD8(r31)
+  lwz r3, 0xAC(r3)
+  #time to transition
+  lis r0, 0x40C0
+  stw r0, 0x18(r1)
+  lfs f1, 0x18(r1)
+  #target colour of transition
+  lis r0, 0xFFFF
+  ori r0, r0, 0xFF00
+  addi r4, r1, 0x18
+  stw r0, 0(r4)
+  #true
+  li r5, 1
+
+  lwz r12, 0x0(r3)
+  lwz r12, 0x28(r12)
+  mtctr r12
+  bctrl
+  mtlr r11
+  blr
 }
 
 Disable Aerial Attack Landing Lag IASA [Magus]
